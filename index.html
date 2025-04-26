@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamSync | Collaborative Workspace</title>
+    <style>
+        /* CSS Variables */
+        :root {
+            --navy-blue: #001f3f;
+            --electric-blue: #7FDBFF;
+            --dark-blue: #003366;
+            --light-blue: #E6F7FF;
+            --white: #FFFFFF;
+            --gray: #F5F5F5;
+            --dark-gray: #333333;
+            --accent: #39CCCC;
+            --shadow: 0 4px 20px rgba(0, 31, 63, 0.15);
+            --transition: all 0.3s ease;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--gray);
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background-color: var(--electric-blue);
+            color: var(--navy-blue);
+            box-shadow: 0 4px 15px rgba(127, 219, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(127, 219, 255, 0.6);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-primary:hover::before {
+            width: 100%;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--electric-blue);
+            border: 2px solid var(--electric-blue);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--electric-blue);
+            color: var(--navy-blue);
+        }
+
+        .btn-danger {
+            background-color: #FF4136;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #E82C0C;
+        }
+
+        /* Special Button Effect */
+        .btn-special {
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--electric-blue);
+            background: transparent;
+            color: var(--electric-blue);
+        }
+
+        .btn-special span {
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-special::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: var(--electric-blue);
+            transform: translate(-50%, -50%) rotate(45deg);
+            transition: all 0.6s ease;
+            z-index: 1;
+            opacity: 0;
+        }
+
+        .btn-special:hover {
+            color: var(--navy-blue);
+        }
+
+        .btn-special:hover::before {
+            width: 100%;
+            height: 100%;
+            opacity: 1;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--navy-blue);
+            color: var(--white);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        header:hover {
+            box-shadow: 0 6px 25px rgba(0, 31, 63, 0.25);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--electric-blue);
+        }
+
+        .logo span {
+            margin-left: 0.5rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        nav ul {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav ul li {
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        nav ul li a {
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        nav ul li a:hover {
+            color: var(--electric-blue);
+        }
+
+        nav ul li::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--electric-blue);
+            transition: var(--transition);
+        }
+
+        nav ul li:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--navy-blue), var(--dark-blue));
+            color: var(--white);
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+            opacity: 0.5;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, var(--white), var(--electric-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            animation: fadeInUp 1s ease 0.4s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--navy-blue);
+            margin-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--navy-blue), var(--electric-blue));
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 31, 63, 0.15);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--navy-blue), var(--electric-blue));
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--electric-blue);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--navy-blue);
+        }
+
+        /* App Interface Preview */
+        .app-preview {
+            background-color: var(--navy-blue);
+            padding: 5rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .app-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgxMjcsMjE5LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==');
+            opacity: 0.3;
+        }
+
+        .app-preview-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-preview h2 {
+            font-size: 2.5rem;
+            color: var(--white);
+            margin-bottom: 2rem;
+        }
+
+        .app-preview p {
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+        }
+
+        .app-screenshot {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+            border: 5px solid var(--electric-blue);
+        }
+
+        .app-screenshot:hover {
+            transform: scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Auth Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 31, 63, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-50px);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-gray);
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            color: var(--electric-blue);
+            transform: rotate(90deg);
+        }
+
+        .modal h2 {
+            color: var(--navy-blue);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--electric-blue);
+            box-shadow: 0 0 0 3px rgba(127, 219, 255, 0.3);
+            outline: none;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .form-footer p {
+            margin-bottom: 1rem;
+        }
+
+        .toggle-form {
+            color: var(--electric-blue);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .toggle-form:hover {
+            text-decoration: underline;
+        }
+
+        /* Dashboard Layout (Preview Only) */
+        .dashboard {
+            display: none;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 1rem 2rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+            color: var(--navy-blue);
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+
+        .sidebar-menu h3 {
+            color: var(--navy-blue);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .sidebar-menu ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu ul li a {
+            display: block;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+
+        .sidebar-menu ul li a:hover {
+            background-color: var(--light-blue);
+            color: var(--electric-blue);
+        }
+
+        .sidebar-menu ul li a.active {
+            background-color: var(--electric-blue);
+            color: var(--navy-blue);
+            font-weight: 600;
+        }
+
+        .main-content {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .meet-container {
+            background-color: var(--navy-blue);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .meet-iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .chat-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 1.5rem;
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+            background-color: var(--light-blue);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            max-width: 80%;
+        }
+
+        .message.sent {
+            margin-left: auto;
+            background-color: var(--electric-blue);
+            color: var(--navy-blue);
+        }
+
+        .message.received {
+            margin-right: auto;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #777;
+            text-align: right;
+            margin-top: 0.25rem;
+        }
+
+        .message.sent .message-time {
+            color: rgba(0, 31, 63, 0.7);
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+
+        .chat-input button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+        }
+
+        .chat-users {
+            background-color: var(--light-blue);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .chat-users h3 {
+            color: var(--navy-blue);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .user-item:hover {
+            background-color: rgba(127, 219, 255, 0.3);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--electric-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--navy-blue);
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .user-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #2ECC40;
+            margin-left: auto;
+        }
+
+        .user-status.offline {
+            background-color: #FFDC00;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--navy-blue);
+            color: var(--white);
+            padding: 3rem 2rem 1rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+
+        .footer-column h3 {
+            color: var(--electric-blue);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column ul li a {
+            transition: var(--transition);
+            opacity: 0.8;
+        }
+
+        .footer-column ul li a:hover {
+            opacity: 1;
+            color: var(--electric-blue);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--electric-blue);
+            color: var(--navy-blue);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Animations and Effects */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .ripple-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .ripple-effect:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        /* Hover Effects */
+        .hover-grow {
+            transition: var(--transition);
+        }
+
+        .hover-grow:hover {
+            transform: scale(1.05);
+        }
+
+        .hover-underline {
+            position: relative;
+        }
+
+        .hover-underline::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--electric-blue);
+            transition: var(--transition);
+        }
+
+        .hover-underline:hover::after {
+            width: 100%;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .auth-buttons {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero {
+                padding: 6rem 1rem 3rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .feature-card {
+                padding: 1.5rem;
+            }
+            
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-blue);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--electric-blue);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--navy-blue);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">👥</div>
+                <span>TeamSync</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#preview">Preview</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <button class="btn btn-secondary login-btn">Login</button>
+                <button class="btn btn-primary signup-btn">Sign Up</button>
+            </div>
+            <div class="hamburger">☰</div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Collaborate Seamlessly With Your Team</h1>
+            <p>TeamSync brings your team together with real-time chat, video meetings, and project collaboration all in one place. Boost productivity and streamline communication.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary btn-special ripple-effect">
+                    <span>Get Started Free</span>
+                </button>
+                <button class="btn btn-secondary ripple-effect">
+                    <span>Watch Demo</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-title">
+            <h2>Powerful Features</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card hover-grow">
+                <div class="feature-icon">💬</div>
+                <h3>Real-time Chat</h3>
+                <p>Instant messaging with your team members. Share files, code snippets, and collaborate in real-time.</p>
+            </div>
+            <div class="feature-card hover-grow">
+                <div class="feature-icon">🎥</div>
+                <h3>Video Meetings</h3>
+                <p>Integrated Google Meet for high-quality video conferences with screen sharing and recording.</p>
+            </div>
+            <div class="feature-card hover-grow">
+                <div class="feature-icon">📅</div>
+                <h3>Scheduling</h3>
+                <p>Easily schedule meetings and set reminders. Sync with your calendar for better time management.</p>
+            </div>
+            <div class="feature-card hover-grow">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure & Private</h3>
+                <p>End-to-end encryption for all your communications. Your data stays safe and private.</p>
+            </div>
+            <div class="feature-card hover-grow">
+                <div class="feature-icon">👨‍💻</div>
+                <h3>Admin Controls</h3>
+                <p>Comprehensive admin dashboard to manage team members, permissions, and workspace settings.</p>
+            </div>
+            <div class="feature-card hover-grow">
+                <div class="feature-icon">📱</div>
+                <h3>Fully Responsive</h3>
+                <p>Works perfectly on all devices from desktop to mobile. Stay connected wherever you are.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Preview Section -->
+    <section class="app-preview" id="preview">
+        <div class="app-preview-content">
+            <h2>Beautiful, Intuitive Interface</h2>
+            <p>TeamSync's clean design makes collaboration effortless. Everything you need is just a click away.</p>
+            <img src="https://media.istockphoto.com/id/127825105/photo/people-putting-together-jigsaw-puzzle.webp?a=1&b=1&s=612x612&w=0&k=20&c=n9wUp8Xoj4ZFUGqm4FflD4d3SwsGYnUyexTRZbrs0ec=" alt="TeamSync Dashboard Preview" class="app-screenshot floating">
+            <!-- <img src="https://plus.unsplash.com/premium_photo-1668902221365-3f3f61550516?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8VGVhbXN5bmN8ZW58MHx8MHx8fDA%3D" alt="TeamSync Dashboard Preview" class="app-screenshot floating"> -->
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div class="modal login-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Login to Your Account</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+                <div class="form-footer">
+                    <p>Don't have an account? <span class="toggle-form signup-toggle">Sign up</span></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal signup-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Create Your Account</h2>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm">Confirm Password</label>
+                    <input type="password" id="signup-confirm" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                <div class="form-footer">
+                    <p>Already have an account? <span class="toggle-form login-toggle">Login</span></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Preview (Hidden by default) -->
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Project Collaboration</h1>
+            <button class="btn btn-danger">Logout</button>
+        </div>
+        <div class="dashboard-layout">
+            <div class="sidebar">
+                <div class="sidebar-menu">
+                    <h3>Menu</h3>
+                    <ul>
+                        <li><a href="#" class="active">Dashboard</a></li>
+                        <li><a href="#">Projects</a></li>
+                        <li><a href="#">Team Chat</a></li>
+                        <li><a href="#">Meetings</a></li>
+                        <li><a href="#">Files</a></li>
+                        <li><a href="#">Settings</a></li>
+                    </ul>
+                </div>
+                <div class="sidebar-menu">
+                    <h3>Team Members</h3>
+                    <ul>
+                        <li><a href="#">Alex Johnson (Admin)</a></li>
+                        <li><a href="#">Sam Wilson</a></li>
+                        <li><a href="#">Taylor Smith</a></li>
+                        <li><a href="#">Jordan Lee</a></li>
+                        <li><a href="#">Casey Brown</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="main-content">
+                <div class="meet-container">
+                    <iframe src="https://meet.google.com/" class="meet-iframe" allow="camera; microphone"></iframe>
+                </div>
+                <div class="chat-container">
+                    <div class="chat-main">
+                        <div class="chat-messages">
+                            <div class="message received">
+                                <div class="message-sender">Sam Wilson</div>
+                                <div class="message-text">Hey team, I've just pushed the latest updates to the repository. Can everyone review?</div>
+                                <div class="message-time">10:30 AM</div>
+                            </div>
+                            <div class="message sent">
+                                <div class="message-sender">You</div>
+                                <div class="message-text">Thanks Sam! I'll check it out right now.</div>
+                                <div class="message-time">10:32 AM</div>
+                            </div>
+                            <div class="message received">
+                                <div class="message-sender">Taylor Smith</div>
+                                <div class="message-text">I've reviewed the changes. Looks good to me. Just one small suggestion on the login component.</div>
+                                <div class="message-time">10:45 AM</div>
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" placeholder="Type your message here...">
+                            <button class="btn btn-primary">Send</button>
+                        </div>
+                    </div>
+                    <div class="chat-users">
+                        <h3>Online Team Members</h3>
+                        <div class="user-list">
+                            <div class="user-item">
+                                <div class="user-avatar">AJ</div>
+                                <div class="user-name">Alex Johnson</div>
+                                <div class="user-status"></div>
+                            </div>
+                            <div class="user-item">
+                                <div class="user-avatar">SW</div>
+                                <div class="user-name">Sam Wilson</div>
+                                <div class="user-status"></div>
+                            </div>
+                            <div class="user-item">
+                                <div class="user-avatar">TS</div>
+                                <div class="user-name">Taylor Smith</div>
+                                <div class="user-status offline"></div>
+                            </div>
+                            <div class="user-item">
+                                <div class="user-avatar">JL</div>
+                                <div class="user-name">Jordan Lee</div>
+                                <div class="user-status"></div>
+                            </div>
+                            <div class="user-item">
+                                <div class="user-avatar">CB</div>
+                                <div class="user-name">Casey Brown</div>
+                                <div class="user-status offline"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>TeamSync</h3>
+                <p>Revolutionizing team collaboration with seamless communication tools and project management features.</p>
+                <div class="social-links">
+                    <a href="#" title="Twitter">🐦</a>
+                    <a href="#" title="Facebook">👍</a>
+                    <a href="#" title="LinkedIn">🔗</a>
+                    <a href="#" title="GitHub">🐱</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Features</h3>
+                <ul>
+                    <li><a href="#">Team Chat</a></li>
+                    <li><a href="#">Video Meetings</a></li>
+                    <li><a href="#">File Sharing</a></li>
+                    <li><a href="#">Task Management</a></li>
+                    <li><a href="#">Admin Controls</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Community</a></li>
+                    <li><a href="#">Tutorials</a></li>
+                    <li><a href="#">API Docs</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 TeamSync. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <!-- JavaScript will be added later -->
+   <!-- Add these before your script tag to load Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+    // Debugging function
+    function debugLog(message) {
+        console.log(`[DEBUG] ${message}`);
+    }
+
+    // DOM Elements with null checks
+    function getElement(selector, required = true) {
+        const element = document.querySelector(selector);
+        if (!element && required) {
+            console.error(`Element not found: ${selector}`);
+        }
+        return element;
+    }
+
+    // Initialize elements with checks
+    const loginBtn = getElement('.login-btn');
+    const signupBtn = getElement('.signup-btn');
+    const loginModal = getElement('.login-modal');
+    const signupModal = getElement('.signup-modal');
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    const loginToggle = getElement('.login-toggle');
+    const signupToggle = getElement('.signup-toggle');
+    const loginForm = getElement('#login-form');
+    const signupForm = getElement('#signup-form');
+    const hamburger = getElement('.hamburger');
+    const navMenu = getElement('nav ul');
+    const dashboard = getElement('.dashboard');
+    const logoutBtn = getElement('.btn-danger', false);
+    const chatInput = getElement('.chat-input input', false);
+    const chatSendBtn = getElement('.chat-input button', false);
+    const chatMessages = getElement('.chat-messages', false);
+
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAwMI4x5KcBd43Oe6ZlNP2hoT2rhPg9Ju0",
+        authDomain: "teamsync-14eca.firebaseapp.com",
+        projectId: "teamsync-14eca",
+        storageBucket: "teamsync-14eca.appspot.com",
+        messagingSenderId: "875245256421",
+        appId: "1:875245256421:web:d548ef4bc1bf1e7e64de0c"
+    };
+
+    // Initialize Firebase
+    let auth, db;
+    try {
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+        debugLog("Firebase initialized successfully");
+    } catch (error) {
+        console.error("Firebase initialization error:", error);
+    }
+
+    // Mock data (fallback if Firebase fails)
+    let currentUser = null;
+    const mockUsers = [
+        { id: 1, name: "Alex Johnson", email: "alex@example.com", password: "password123", isAdmin: true },
+        { id: 2, name: "Sam Wilson", email: "sam@example.com", password: "password123", isAdmin: false }
+    ];
+
+    let messages = [
+        { id: 1, sender: "Sam Wilson", text: "Hey team, I've just pushed the latest updates to the repository. Can everyone review?", time: "10:30 AM" },
+        { id: 2, sender: "You", text: "Thanks Sam! I'll check it out right now.", time: "10:32 AM", isCurrentUser: true },
+        { id: 3, sender: "Taylor Smith", text: "I've reviewed the changes. Looks good to me. Just one small suggestion on the login component.", time: "10:45 AM" }
+    ];
+
+    const meetLinks = {
+        projectA: "https://meet.google.com/gpr-xwcp-fut",
+        projectB: "https://meet.google.com/swt-wfnk-ops",
+        general: "https://meet.google.com/irb-uims-xct"
+    };
+
+    // Event Listeners with checks
+    if (loginBtn) loginBtn.addEventListener('click', () => toggleModal(loginModal));
+    if (signupBtn) signupBtn.addEventListener('click', () => toggleModal(signupModal));
+    if (loginToggle) loginToggle.addEventListener('click', () => {
+        loginModal?.classList.remove('active');
+        signupModal?.classList.add('active');
+    });
+    if (signupToggle) signupToggle.addEventListener('click', () => {
+        signupModal?.classList.remove('active');
+        loginModal?.classList.add('active');
+    });
+    if (closeModalBtns.length) {
+        closeModalBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                loginModal?.classList.remove('active');
+                signupModal?.classList.remove('active');
+            });
+        });
+    }
+    if (hamburger) hamburger.addEventListener('click', toggleMobileMenu);
+    if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+    if (chatSendBtn) chatSendBtn.addEventListener('click', sendMessage);
+    if (chatInput) chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+    if (loginForm) loginForm.addEventListener('submit', handleLogin);
+    if (signupForm) signupForm.addEventListener('submit', handleSignup);
+
+    // Initialize the app when DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', initApp);
+
+    // Functions
+    function initApp() {
+        debugLog("Initializing application");
+        
+        // Check if user is logged in
+        const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+        if (isLoggedIn) {
+            try {
+                currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+                showDashboard();
+            } catch (e) {
+                console.error("Error parsing user data:", e);
+            }
+        }
+        
+        renderMessages();
+        setupMeetIframe();
+    }
+
+    function toggleModal(modal) {
+        if (!modal) return;
+        debugLog(`Toggling modal: ${modal.className}`);
+        modal.classList.toggle('active');
+    }
+
+    function toggleMobileMenu() {
+        if (!navMenu) return;
+        navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email')?.value;
+        const password = document.getElementById('login-password')?.value;
+
+        if (!email || !password) {
+            showAlert('error', 'Please fill in all fields');
+            return;
+        }
+
+        try {
+            // Try Firebase auth first
+            if (auth) {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                currentUser = {
+                    name: userCredential.user.displayName || userCredential.user.email.split('@')[0],
+                    email: userCredential.user.email,
+                    isAdmin: false
+                };
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showDashboard();
+                loginModal?.classList.remove('active');
+                showAlert('success', 'Login successful!');
+                return;
+            }
+
+            // Fallback to mock auth
+            const user = mockUsers.find(u => u.email === email && u.password === password);
+            if (user) {
+                currentUser = {
+                    name: user.name,
+                    email: user.email,
+                    isAdmin: user.isAdmin
+                };
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showDashboard();
+                loginModal?.classList.remove('active');
+                showAlert('success', 'Login successful!');
+            } else {
+                showAlert('error', 'Invalid email or password');
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            showAlert('error', error.message || 'Login failed');
+        }
+    }
+
+    async function handleSignup(e) {
+        e.preventDefault();
+        const name = document.getElementById('signup-name')?.value;
+        const email = document.getElementById('signup-email')?.value;
+        const password = document.getElementById('signup-password')?.value;
+        const confirmPassword = document.getElementById('signup-confirm')?.value;
+
+        if (!name || !email || !password || !confirmPassword) {
+            showAlert('error', 'Please fill in all fields');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            showAlert('error', 'Passwords do not match');
+            return;
+        }
+
+        try {
+            // Try Firebase auth first
+            if (auth) {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({ displayName: name });
+                
+                await db.collection('users').doc(userCredential.user.uid).set({
+                    name: name,
+                    email: email,
+                    isAdmin: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showAlert('success', 'Account created successfully!');
+                signupModal?.classList.remove('active');
+                loginModal?.classList.add('active');
+                return;
+            }
+
+            // Fallback to mock auth
+            const newUser = {
+                id: mockUsers.length + 1,
+                name,
+                email,
+                password,
+                isAdmin: false
+            };
+            mockUsers.push(newUser);
+            showAlert('success', 'Account created successfully!');
+            signupModal?.classList.remove('active');
+            loginModal?.classList.add('active');
+        } catch (error) {
+            console.error("Signup error:", error);
+            showAlert('error', error.message || 'Signup failed');
+        }
+    }
+
+    function handleLogout() {
+        try {
+            if (auth) auth.signOut();
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('currentUser');
+            currentUser = null;
+            hideDashboard();
+            showAlert('success', 'Logged out successfully');
+        } catch (error) {
+            console.error("Logout error:", error);
+            showAlert('error', 'Logout failed');
+        }
+    }
+
+    // ... (keep all your other functions the same, just add null checks where needed)
+    // Make sure to add null checks in showDashboard(), hideDashboard(), etc.
+</script>
+</body>
+</html>
